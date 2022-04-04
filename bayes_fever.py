@@ -69,10 +69,16 @@ class SimpleSampler(object):
 
         Returns: empirical probability of query values
         """
-        # 
-        # fill in the function body here
-        #
-        return 0.0
+        samples = self.generate_samples(num_samples)
+        count = 0
+        flag = True
+        for dict_key in samples:
+            for q_key in query:
+                if not query_vals[q_key] == samples[dict_key][q_key]:
+                    flag = False    
+            if flag: count += 1
+            flag = True
+        return count/num_samples
 
         
 class RejectionSampler(SimpleSampler):
@@ -196,9 +202,9 @@ if __name__ == '__main__':
     # learned from data!
     FEVER_NODES = [
         BooleanVariableNode('E', (),     {(): 0.25}),
-        BooleanVariableNode('F', ('E',), {(True,): 0.25, (False,): 0.25}),
-        BooleanVariableNode('A', ('F',), {(True,): 0.25, (False,): 0.25}),
-        BooleanVariableNode('T', ('F',), {(True,): 0.25, (False,): 0.25}),
+        BooleanVariableNode('F', ('E',), {(True,): 0.5, (False,): 0.1}),
+        BooleanVariableNode('A', ('F',), {(True,): 0.875, (False,): 0.25}),
+        BooleanVariableNode('T', ('F',), {(True,): 0.75, (False,): 0.0625}),
     ]
     sampler_simp = SimpleSampler(FEVER_NODES)
     sampler_reject = RejectionSampler(FEVER_NODES)
